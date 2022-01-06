@@ -18,12 +18,12 @@ class CollectionController < ApplicationController
   end
 
   def get
-    return render json: {error: "Could not find collection"}, status: 404 unless @collection
+    return render json: {error: "Could not find collection, did you provide an ID?"}, status: 404 unless @collection
     render json: {collection: @collection}, status: 200
   end
 
   def add_items
-    return render json: {error: "Could not find collection"}, status: 404 unless @collection
+    return render json: {error: "Could not find collection, did you provide an ID?"}, status: 404 unless @collection
     if add_or_del_item_params[:items]
       begin
         add_or_delete_items(add_or_del_item_params[:items], false)
@@ -37,7 +37,7 @@ class CollectionController < ApplicationController
   end
 
   def delete_items
-    return render json: {error: "Could not find collection"}, status: 404 unless @collection
+    return render json: {error: "Could not find collection, did you provide an ID?"}, status: 404 unless @collection
     if add_or_del_item_params[:items]
       begin
         add_or_delete_items(add_or_del_item_params[:items], true)

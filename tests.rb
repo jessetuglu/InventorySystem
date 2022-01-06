@@ -224,3 +224,6 @@ test_collection_add_items
 test_collection_delete_items
 # Test adding bad items to collection
 test_collection_add_bad_items
+
+# Clear the DB
+clear_all

@@ -12,7 +12,7 @@ class ItemController < ApplicationController
   end
 
   def get
-    return render json: {error: "Could not find item"}, status: 404 unless @item
+    return render json: {error: "Could not get item, did you provide an ID?"}, status: 404 unless @item
     render json: {item: @item}, status: 200
   end
 
@@ -29,14 +29,14 @@ class ItemController < ApplicationController
   end
 
   def delete
-    return render json: {error: "Could not get item."}, status: 404 unless @item
+    return render json: {error: "Could not get item, did you provide an ID?"}, status: 404 unless @item
     return render json: {errors: "Could not destroy item: #{@item.errors.full_messages}"}, status: 400 unless @item.destroy
 
     render json: {msg: "Item deleted."}, status: 200
   end
 
   def update
-    return render json: {error: "Could not get item."}, status: 404 unless @item
+    return render json: {error: "Could not get item, did you provide an ID?"}, status: 404 unless @item
 
     @item.description = update_params[:description] if update_params[:description].present?
     @item.title = update_params[:title] if update_params[:title].present?
