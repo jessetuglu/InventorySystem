@@ -22,6 +22,15 @@ class TestHelper
     }
     req("/collections/new", "Post", body, true)
   end
+
+  def self.get_item(id_in)
+    body = {
+      item: {
+        id: id_in
+      }
+    }
+    req("/item", "Get", body)
+  end
 end
 
 def req(path, protocol, body = nil, read_body = false)
@@ -180,6 +189,10 @@ def test_collection_delete_items
   resp = req("/collections/delete_items", "Delete", body)
   raise "Failed: #{resp.read_body}" unless resp.code.to_i == 200
   raise "Failed: Items size is not 0" unless JSON.parse(resp.read_body)["collection"]["items"].length == 0
+  item_1_check = TestHelper.get_item(item_1)
+  raise "Failed: Deep Delete" unless item_1_check.code.to_i == 200
+  item_2_check = TestHelper.get_item(item_2)
+  raise "Failed: Deep Delete" unless item_2_check.code.to_i == 200
   puts "Test 'test_collection_delete_items' PASS"
 end
 
@@ -224,6 +237,3 @@ test_collection_add_items
 test_collection_delete_items
 # Test adding bad items to collection
 test_collection_add_bad_items
-
-# Clear the DB
-clear_all
