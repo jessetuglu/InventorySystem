@@ -37,4 +37,4 @@
 
 ## Testing
 - There is a tests file with some very basic tests located at the root of the project
-- To run the tests, make sure you are the root and run ```ruby tests.rb```; Errors will be thrown if tests fail. 
+- To run the tests, make sure you are in the root dir and run ```ruby tests.rb```; Errors will be thrown if tests fail. 
