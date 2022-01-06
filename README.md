@@ -34,3 +34,7 @@
   - name: string/required
 - DELETE "/collections/{id}", deletes collection with {id}
 - PUT "/collections/{id}", updates collection with {id}
+
+## Testing
+- There is a tests file with some very basic tests located at the root of the project
+- To run the tests, make sure you are the root and run ```ruby tests.rb```; Errors will be thrown if tests fail. 
