@@ -83,19 +83,21 @@ class CollectionController < ApplicationController
   end
 
   def add_or_del_item_params
-    params.require(:collection).permit(:id, items: [:id])
+    params.require(:collection).permit(items: [:id])
   end
 
   def get_collection
     @collection = nil
-    @collection = Collection.find_by(id: params[:collection][:id]) if params[:collection].present?
+    @collection = Collection.find_by(id: params[:id]) if params[:id].present?
   end
 
   def add_or_delete_items(items_in, del = true)
     items_in.each do |it|
       item = Item.find_by(id: it[:id])
+      # check if invalid item
       raise InvalidItemID.new(it[:id]) unless item
       if del
+        # check if array actually contains such item, otherwise throw error
         raise InvalidItemID.new(it[:id]) unless @collection.items.include?(item)
         @collection.items.delete(item)
       else

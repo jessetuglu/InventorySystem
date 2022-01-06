@@ -59,11 +59,11 @@ class ItemController < ApplicationController
   end
 
   def update_params
-    params.require(:item).permit(:id, :title, :description, :quantity, :collection_id)
+    params.require(:item).permit(:title, :description, :quantity, :collection_id)
   end
 
   def get_item
     @item = nil
-    @item = Item.find_by(id: params[:item][:id]) if params[:item].present?
+    @item = Item.find_by(id: params[:id]) if params[:id].present?
   end
 end

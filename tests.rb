@@ -24,12 +24,11 @@ class TestHelper
   end
 
   def self.get_item(id_in)
-    body = {
-      item: {
-        id: id_in
-      }
-    }
-    req("/item", "Get", body)
+    req("/items/#{id_in}", "Get")
+  end
+
+  def self.get_collection(id_in)
+    req("/collections/#{id_in}", "Get")
   end
 end
 
@@ -84,10 +83,9 @@ def test_update_item_valid_coll_id
   new_item = TestHelper.create_item("test_update_item_valid_coll_id: #{rand(100000)}", "", 100)
   new_col = TestHelper.create_coll("test_update_item_valid_coll_id #{rand(100000)}")
   item_body = {
-    :id => new_item["item"]["id"],
     :collection_id => new_col["collection"]["id"]
   }
-  item_resp = req("/items/update", "Put", item_body)
+  item_resp = req("/items/#{new_item["item"]["id"]}", "Put", item_body)
   raise "Failed: #{item_resp.read_body}" unless item_resp.code.to_i == 200
   puts "Test 'test_update_item_valid_coll_id' PASS"
 end
@@ -108,10 +106,9 @@ def test_update_item_invalid_quantity
   puts "Test 'test_update_item_invalid_quantity' RUNNING"
   new_item = TestHelper.create_item("test_update_item_invalid_quantity: #{rand(100000)}","",100)
   body = {
-    :id => new_item["item"]["id"],
     :quantity => -100,
   }
-  resp = req("/items/update", "Put", body)
+  resp = req("/items/#{new_item["item"]["id"]}", "Put", body)
   raise "Failed: #{resp.read_body}" if resp.code.to_i != 422
   puts "Test 'test_update_item_invalid_quantity' PASS"
 end
@@ -133,10 +130,9 @@ def test_update_item_invalid_coll
   puts "Test 'test_update_item_invalid_coll' RUNNING"
   new_item = TestHelper.create_item("test_update_item_invalid_coll #{rand(1000000)}", "", 2)
   body = {
-    :id => new_item["item"]["id"],
     :collection_id => "yay"
   }
-  resp = req("/items/update", "Put", body)
+  resp = req("/items/#{new_item["item"]["id"]}", "Put", body)
   raise "Failed: #{resp.read_body}" if resp.code.to_i != 422
   puts "Test 'test_update_item_invalid_coll' PASS"
 end
@@ -156,7 +152,6 @@ def test_collection_add_items
   new_coll = TestHelper.create_coll("test_collection_add_item #{rand(1000000)}")
   body = {
     collection: {
-      :id => new_coll["collection"]["id"],
       :items => [
         {:id => TestHelper.create_item("test_collection_add_items #{rand(1000000)}", "", 1)["item"]["id"]},
         {:id => TestHelper.create_item("test_collection_add_items #{rand(1000000)}", "", 1)["item"]["id"]},
@@ -164,7 +159,7 @@ def test_collection_add_items
       ]
     }
   }
-  resp = req("/collections/add_items", "Put", body)
+  resp = req("/collections/#{new_coll["collection"]["id"]}/add_items", "Put", body)
   raise "Failed: #{resp.read_body}" unless resp.code.to_i == 200
   raise "Failed: Items size is not 3" unless JSON.parse(resp.read_body)["collection"]["items"].length == 3
   puts "Test 'test_collection_add_item' PASS"
@@ -177,16 +172,15 @@ def test_collection_delete_items
   item_2 = TestHelper.create_item("test_collection_delete_items #{rand(1000000)}", "", 1)["item"]["id"]
   body = {
     collection: {
-      :id => new_coll["collection"]["id"],
       :items => [
         {:id => item_1},
         {:id => item_2}
       ]
     }
   }
-  resp = req("/collections/add_items", "Put", body)
+  resp = req("/collections/#{new_coll["collection"]["id"]}/add_items", "Put", body)
   raise "Failed: Items size is not 2" unless JSON.parse(resp.read_body)["collection"]["items"].length == 2
-  resp = req("/collections/delete_items", "Delete", body)
+  resp = req("/collections/#{new_coll["collection"]["id"]}/delete_items", "Delete", body)
   raise "Failed: #{resp.read_body}" unless resp.code.to_i == 200
   raise "Failed: Items size is not 0" unless JSON.parse(resp.read_body)["collection"]["items"].length == 0
   item_1_check = TestHelper.get_item(item_1)
@@ -201,13 +195,12 @@ def test_collection_add_bad_items
   new_coll = TestHelper.create_coll("test_collection_add_bad_items #{rand(1000000)}")
   body = {
     collection: {
-      :id => new_coll["collection"]["id"],
       :items => [
         {:id => "dwieddiewd"},
       ]
     }
   }
-  resp = req("/collections/add_items", "Put", body)
+  resp = req("/collections/#{new_coll["collection"]["id"]}/add_items", "Put", body)
   raise "Failed: #{resp.read_body}" unless resp.code.to_i == 422
   puts "Test 'test_collection_add_bad_items' PASS"
 end
